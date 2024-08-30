@@ -14,7 +14,7 @@ app.get('/shop/alldata', (req, res) => {
     let data = [{
         id: 1,
         productImage: "images/product-3.png",
-        productName: "hello",
+        productName: "Ergonomic Chair",
         productPrice: 100,
         pQuantity: 1
     }, {
