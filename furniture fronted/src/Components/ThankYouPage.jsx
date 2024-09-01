@@ -29,7 +29,7 @@ function ThankYouPage() {
               <h2 className="display-3 text-black">Thank you!</h2>
               <p className="lead mb-5">You order was successfuly completed.</p>
               <p>
-                <a href="shop.html" className="btn btn-sm btn-outline-black">
+                <a href="shop" className="btn btn-sm btn-outline-black">
                   Back to shop
                 </a>
               </p>
