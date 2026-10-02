@@ -7,6 +7,7 @@ const { Contact, TestPayment, Account, CodOrder, NewsletterSubscription, Product
 const bodyParser = require('body-parser')
 const Stripe = require("stripe")
 const nodemailer = require("nodemailer")
+const { Resend } = require("resend")
 const path = require("path")
 const crypto = require("crypto")
 const { promisify } = require("util")
@@ -1113,7 +1114,214 @@ app.get("/admin/coupons", requireAdmin, async (req, res, next) => {
         next(error)
     }
 })
+function getSmtpConfig() {
+    const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM } = process.env
 
+    const host = (SMTP_HOST || "").trim()
+    const user = (SMTP_USER || "").trim()
+    const pass = (SMTP_PASS || "").trim()
+    const configuredFrom = (SMTP_FROM || "").trim()
+    const port = Number(SMTP_PORT)
+
+    if (!host || !user || !pass) return null
+    if (!Number.isInteger(port) || port < 1 || port > 65535) return null
+
+    const from = configuredFrom && /<.*@.*\..+>/.test(configuredFrom) || /.+@.+\..+/.test(configuredFrom)
+        ? configuredFrom
+        : user
+
+    return { host, port, user, pass, from }
+}
+
+function getResendClient() {
+    const apiKey = (process.env.RESEND_API_KEY || "").trim()
+
+    if (!apiKey) return null
+
+    return new Resend(apiKey)
+}
+
+function getResendFrom() {
+    return (process.env.RESEND_FROM || "onboarding@resend.dev").trim()
+}
+
+function isProductionEmailMode() {
+    return process.env.NODE_ENV === "production"
+}
+
+function escapeHtml(value) {
+    return String(value || "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[character])
+}
+
+async function sendEmail({ to, subject, text, html, smtpFrom }) {
+    /*
+     * LIVE / RENDER
+     * Use Resend HTTP API.
+     */
+    if (isProductionEmailMode()) {
+        const resend = getResendClient()
+
+        if (!resend) {
+            return {
+                sent: false,
+                reason: "not_configured"
+            }
+        }
+
+        try {
+            const result = await resend.emails.send({
+                from: getResendFrom(),
+                to,
+                subject,
+                text,
+                html
+            })
+
+            if (result?.error) {
+                console.error(
+                    "Resend email failed:",
+                    result.error.message || result.error
+                )
+
+                return {
+                    sent: false,
+                    reason: "failed"
+                }
+            }
+
+            return {
+                sent: true
+            }
+        } catch (error) {
+            console.error(
+                "Resend email failed:",
+                error?.message || error?.name || "RESEND_ERROR"
+            )
+
+            return {
+                sent: false,
+                reason: "failed"
+            }
+        }
+    }
+
+    /*
+     * LOCAL DEVELOPMENT
+     * Keep existing Gmail SMTP / Nodemailer.
+     */
+    const config = getSmtpConfig()
+
+    if (!config) {
+        return {
+            sent: false,
+            reason: "not_configured"
+        }
+    }
+
+    const transporter = nodemailer.createTransport({
+        host: config.host,
+        port: config.port,
+        secure: process.env.SMTP_SECURE === "true" || config.port === 465,
+        auth: {
+            user: config.user,
+            pass: config.pass
+        },
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
+        socketTimeout: 15000
+    })
+
+    try {
+        await transporter.sendMail({
+            from: smtpFrom || config.from,
+            to,
+            subject,
+            text,
+            html
+        })
+
+        return {
+            sent: true
+        }
+    } catch (error) {
+        console.error(
+            "SMTP email failed:",
+            error?.code || error?.name || "SMTP_ERROR"
+        )
+
+        return {
+            sent: false,
+            reason: "failed"
+        }
+    } finally {
+        transporter.close()
+    }
+}
+
+async function sendCodOrderConfirmation(order) {
+    const items = order.items.map(item =>
+        `${item.name} × ${item.quantity} — ${(item.unitAmount * item.quantity / 100).toFixed(2)} EUR`
+    )
+
+    const text = [
+        `Order ${order.orderNumber} confirmed`,
+        "",
+        `Hello ${order.customer.name},`,
+        "Your order has been received. Please pay the courier in cash when it is delivered.",
+        "",
+        "Items:",
+        ...items,
+        "",
+        `Total due on delivery: ${(order.total / 100).toFixed(2)} EUR`
+    ].join("\n")
+
+    const html = `<div style="font-family:Arial,sans-serif;color:#292929;line-height:1.6"><h1>Order received</h1><p>Hello ${escapeHtml(order.customer.name)},</p><p>Your order has been received. Please pay the courier in cash when it is delivered.</p><p><strong>Order:</strong> ${escapeHtml(order.orderNumber)}<br><strong>Total due on delivery:</strong> ${(order.total / 100).toFixed(2)} EUR</p><h2>Items</h2><ul>${order.items.map(item => `<li>${escapeHtml(item.name)} × ${item.quantity} — ${(item.unitAmount * item.quantity / 100).toFixed(2)} EUR</li>`).join("")}</ul></div>`
+
+    const emailResult = await sendEmail({
+        to: order.customer.email,
+        subject: `Order ${order.orderNumber} confirmed — cash on delivery`,
+        text,
+        html
+    })
+
+    if (emailResult.sent) {
+        return CodOrder.findByIdAndUpdate(
+            order._id,
+            {
+                $set: {
+                    receiptEmailStatus: "sent",
+                    receiptEmailSentAt: new Date()
+                }
+            },
+            { new: true }
+        )
+    }
+
+    return CodOrder.findByIdAndUpdate(
+        order._id,
+        {
+            $set: {
+                receiptEmailStatus: emailResult.reason
+            }
+        },
+        { new: true }
+    )
+}
+
+async function sendNewsletterEmail({ to, subject, text, html }) {
+    return sendEmail({
+        to,
+        subject,
+        text,
+        html
+    })
+}
 function getSmtpConfig() {
     const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM } = process.env
     const host = (SMTP_HOST || "").trim()
