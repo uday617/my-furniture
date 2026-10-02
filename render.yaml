@@ -2,6 +2,7 @@ services:
   - type: web
     name: my-furniture-api
     runtime: node
+    plan: free
     rootDir: furniture backend
     buildCommand: npm ci
     startCommand: npm start
