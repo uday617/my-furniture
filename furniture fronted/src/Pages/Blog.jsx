@@ -1,7 +1,6 @@
 import React from "react";
 import Navbar from "../Components/Navbar";
 import Hero from "../Components/Hero";
-import Footer from "../Components/Footer";
 import BlogSection from "../Components/BlogSection";
 import Testimonial from "../Components/Testimonial";
 
@@ -15,7 +14,6 @@ function Blog() {
       <BlogSection />
       <Testimonial />
       {/* footer */}
-      <Footer />
     </>
   );
 }

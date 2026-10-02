@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { json, Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function CheckoutSection() {
   let [formdata,setformdata]= useState({country:"India",firstname:"uday",lastname:"singh",companyName:"XYZ",address:"jaipur",state:"Rajasthan",Zip:"302012",email:"uday@gmail.com",phoneNo:"6376787327",Notes:"hello"})
   let nevigate=useNavigate()
+  let [submitting,setSubmitting]=useState(false)
+  let [submitError,setSubmitError]=useState("")
 
   let[cartdata,setcartdata]=useState(JSON.parse(localStorage.getItem('cartData'))||[])
 
@@ -15,20 +17,58 @@ function CheckoutSection() {
       setformdata(data)
 }
 const handlesubmit= async()=>{
-  const response = await fetch("http://localhost:8000/checkout/insert", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({formdata,cartdata}),
-  })
-  const jsonResponse = await response.json();
-  console.log(jsonResponse);
-  window.alert(jsonResponse["message"])
-  localStorage.removeItem("cartData")
-  nevigate("/thankyou") 
+  if (submitting || cartdata.length === 0) return;
+  setSubmitting(true);
+  setSubmitError("");
+  try {
+    const response = await fetch("http://localhost:8000/checkout/insert", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({formdata,cartdata}),
+    });
+    if (!response.ok) throw new Error("Your order could not be saved.");
+    const jsonResponse = await response.json();
+    const total = cartdata.reduce((sum, item) => {
+      const price = Number(item.productPrice ?? Number(item.priceMinor || 0) / 100) || 0;
+      return sum + price * (Number(item.pQuantity) || 1);
+    }, 0);
+    const order = {
+      id: `SK-${Date.now().toString(36).toUpperCase()}`,
+      createdAt: new Date().toISOString(),
+      status: "Processing",
+      total,
+      currency: "EUR",
+      customer: { ...formdata },
+      items: cartdata.map(item => ({
+        id: item.id,
+        name: item.productName || item.name || "Product",
+        slug: item.slug || "",
+        image: item.productImage || item.image || "",
+        price: Number(item.productPrice ?? Number(item.priceMinor || 0) / 100) || 0,
+        quantity: Number(item.pQuantity) || 1,
+      })),
+    };
+    const savedOrders = JSON.parse(localStorage.getItem("storeOrders") || "[]");
+    localStorage.setItem("storeOrders", JSON.stringify([order, ...(Array.isArray(savedOrders) ? savedOrders : [])]));
+    localStorage.setItem("storeProfile", JSON.stringify({
+      name: `${formdata.firstname || ""} ${formdata.lastname || ""}`.trim(),
+      email: formdata.email || "",
+      phone: formdata.phoneNo || "",
+      address: [formdata.address, formdata.state, formdata.Zip, formdata.country].filter(Boolean).join(", "),
+    }));
 
-  
+    const orderedIds = new Set(cartdata.map(item => String(item.id)));
+    const remainingCart = (JSON.parse(localStorage.getItem("cartData") || "[]") || []).filter(item => !orderedIds.has(String(item.id)));
+    localStorage.setItem("cartData", JSON.stringify(remainingCart));
+    window.dispatchEvent(new Event("cartDataUpdated"));
+    window.dispatchEvent(new Event("orderdataupdated"));
+    window.alert(jsonResponse.message || "Order saved successfully.");
+    nevigate("/thankyou");
+  } catch {
+    setSubmitError("We couldn’t save your order. Your bag is still here; please try again.");
+  } finally {
+    setSubmitting(false);
+  }
 }
 
   return (
@@ -554,14 +594,17 @@ const handlesubmit= async()=>{
                       </div>
                     </div>
                     <div className="form-group">
+                      {submitError && <p role="alert" className="text-danger">{submitError}</p>}
                       <button
                         className="btn btn-black btn-lg py-3 btn-block"
+                        type="button"
+                        disabled={submitting || cartdata.length === 0}
                         // onClick="window.location='thankyou.html'" 
                         onClick={()=>handlesubmit()}
                       >
                         <span className="text-white" >
                         
-                        Place Order
+                        {submitting ? "Saving order…" : "Place Order"}
                         </span>
                       </button>
                     </div>

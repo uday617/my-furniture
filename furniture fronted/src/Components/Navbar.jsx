@@ -11,9 +11,6 @@ function Navbar({ one }) {
         arial-label="Furni navigation bar"
       >
         <div className="container">
-          <Link className="navbar-brand" to="/">
-            Uday<span>.</span>
-          </Link>
           <button
             className="navbar-toggler"
             type="button"

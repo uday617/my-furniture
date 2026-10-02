@@ -1,0 +1,9 @@
+.rugs-sort { min-width:220px; }
+
+@media (max-width: 760px) {
+  .rugs-sort { min-width:155px; }
+}
+
+@media (max-width: 500px) {
+  .rugs-sort { min-width:128px; }
+}

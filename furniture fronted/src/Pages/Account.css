@@ -1,0 +1,121 @@
+.account-profile {
+  width: min(calc(100% - 40px), 1080px);
+  margin: 0 auto;
+  padding: 42px 0 82px;
+}
+
+.account-profile h1 {
+  margin: 8px 0 12px;
+  color: #292929;
+  font-size: clamp(38px, 5vw, 58px);
+  font-weight: 400;
+  line-height: 1.08;
+}
+
+.account-profile__intro { margin: 0; color: rgba(41, 41, 41, .72); font-size: 15px; }
+.account-dashboard { margin-top: 30px; }
+.account-dashboard__stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.account-dashboard__stats article { display: grid; min-height: 108px; align-content: space-between; gap: 14px; padding: 16px; border: 1px solid rgba(41, 41, 41, .14); border-radius: 4px; background: rgba(255, 248, 239, .58); }
+.account-dashboard__stats article span { color: rgba(41, 41, 41, .65); font-size: 12px; }
+.account-dashboard__stats article strong { color: #292929; font-size: 23px; font-weight: 500; line-height: 1.1; }
+.account-orders { margin-top: 34px; border-top: 1px solid rgba(41, 41, 41, .16); }
+.account-orders__heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; padding: 22px 0 13px; }
+.account-orders__heading p,.account-details__heading p { margin: 0 0 5px; color: #587364; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
+.account-orders__heading h2,.account-details__heading h2 { margin: 0; color: #292929; font-size: 21px; font-weight: 400; }
+.account-orders__heading > span { color: rgba(41, 41, 41, .6); font-size: 12px; }
+.account-orders__list { border-top: 1px solid rgba(41, 41, 41, .1); }
+.account-order { display: grid; grid-template-columns: minmax(0, 1fr) minmax(150px, 180px) 100px; align-items: center; gap: 18px; padding: 15px 0; border-bottom: 1px solid rgba(41, 41, 41, .1); }
+.account-order__main { display: grid; min-width: 0; grid-template-columns: auto 1fr; align-items: baseline; gap: 5px 14px; }
+.account-order__main strong { color: #292929; font-size: 13px; font-weight: 500; }
+.account-order__main > span { color: rgba(41, 41, 41, .6); font-size: 11px; }
+.account-order__main small { grid-column: 1 / -1; overflow: hidden; color: rgba(41, 41, 41, .68); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.account-order__status { display: grid; justify-items: start; gap: 7px; color: #416557; font-size: 12px; line-height: 1.45; }
+.account-order__cancel { padding: 0; border: 0; background: transparent; color: #8c3d30; cursor: pointer; font: inherit; font-size: 11px; text-decoration: underline; text-underline-offset: 2px; }
+.account-order__cancel:disabled { cursor: wait; opacity: .65; }
+.account-order__cancellation-reason { color: rgba(41, 41, 41, .65); font-size: 11px; }
+.account-test-receipt { grid-column: 1 / -1; color: rgba(41, 41, 41, .7); font-size: 12px; line-height: 1.55; }
+.account-test-receipt summary { color: #416557; cursor: pointer; }
+.account-test-receipt p { margin: 8px 0 0; }
+.account-test-receipt strong { font-size: inherit; }
+.account-order__total { color: #292929; font-size: 13px; font-weight: 500; text-align: right; }
+.account-orders__empty { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; padding: 18px 0; border-top: 1px solid rgba(41, 41, 41, .1); }
+.account-orders__empty p { margin: 0; color: rgba(41, 41, 41, .7); font-size: 13px; }
+.account-orders__empty a { color: #416557; font-size: 13px; }
+.account-test-payments { padding-bottom: 8px; }
+.account-test-payment .account-order__status { color: #8a6536; }
+.account-test-payments__note { margin: 14px 0 0; color: rgba(41, 41, 41, .6); font-size: 12px; line-height: 1.5; }
+.account-dashboard__links { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+.account-dashboard__links a { display: grid; grid-template-columns: 1fr auto; gap: 5px 16px; padding: 15px; border: 1px solid rgba(41, 41, 41, .14); border-radius: 4px; color: #292929; }
+.account-dashboard__links a > span:first-child { color: #587364; font-size: 12px; }
+.account-dashboard__links a strong { font-size: 13px; font-weight: 500; }
+.account-dashboard__links a > span:last-child { grid-column: 2; grid-row: 1 / 3; align-self: center; color: #416557; }
+.account-details { margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(41, 41, 41, .16); }
+.account-details__heading { margin-bottom: 17px; }
+.account-profile__form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 18px; }
+.account-profile__form label { display: grid; gap: 8px; color: #587364; font-size: 12px; }
+.account-profile__form input { min-height: 48px; padding: 0 13px; border: 1px solid rgba(41, 41, 41, .2); border-radius: 4px; background: #fff8ef; color: #292929; font: inherit; }
+.account-profile__form input:focus { border-color: #587364; outline: 2px solid rgba(88, 115, 100, .2); }
+.account-profile__form button { min-height: 48px; grid-column: 1 / -1; border: 0; border-radius: 4px; background: #416557; color: #fff8ef; cursor: pointer; font: inherit; }
+.account-profile__status { grid-column: 1 / -1; margin: -7px 0 0; color: #416557; font-size: 13px; }
+.account-profile__note { margin: 16px 0 0; color: rgba(41, 41, 41, .6); font-size: 12px; line-height: 1.5; }
+.account-profile__links { display: flex; flex-wrap: wrap; gap: 12px 26px; margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(41, 41, 41, .14); }
+.account-profile__links a { color: #416557; font-size: 13px; }
+.account-profile__links a span { padding-left: 5px; }
+.account-auth__form { max-width: 560px; }
+.account-auth__error { grid-column: 1 / -1; margin: 0; color: #8c3d30; font-size: 13px; }
+.account-auth__toggle { margin: 18px 0 0; color: rgba(41, 41, 41, .7); font-size: 13px; }
+.account-auth__toggle button,.account-auth__logout { padding: 0; border: 0; background: transparent; color: #416557; cursor: pointer; font: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.account-auth__form button:disabled { cursor: wait; opacity: .65; }
+.account-auth__retry { margin-top: 18px; padding: 12px 18px; border: 0; border-radius: 4px; background: #416557; color: #fff8ef; cursor: pointer; font: inherit; }
+.account-details__heading { display: flex; align-items: end; justify-content: space-between; gap: 16px; }
+.account-auth__logout { font-size: 12px; }
+.account-activity-settings { display: grid; gap: 12px; margin-top: 28px; padding: 17px; border: 1px solid rgba(41, 41, 41, .14); background: rgba(255, 248, 239, .58); }
+.account-activity-settings p,.account-activity-settings small { margin: 0; color: rgba(41, 41, 41, .68); font-size: 12px; line-height: 1.55; }
+.account-activity-settings label { display: flex; align-items: flex-start; gap: 9px; color: #416557; font-size: 12px; }
+.account-activity-settings input { margin: 1px 0 0; accent-color: #416557; }
+.account-recommendation-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; padding: 15px 0; }
+.account-recommendation { display: grid; align-content: start; gap: 8px; color: #292929; font-size: 12px; text-decoration: none; }
+.account-recommendation img { width: 100%; aspect-ratio: 4 / 5; background: #eee8dd; object-fit: cover; }
+.account-recommendation strong { font-weight: 500; line-height: 1.4; }
+.account-recommendation span { color: #587364; }
+.account-cancel-overlay { position: fixed; z-index: 2000; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(30, 32, 29, .52); backdrop-filter: blur(5px); }
+.account-cancel-dialog { position: relative; width: min(100%, 500px); padding: clamp(24px, 5vw, 38px); border: 1px solid rgba(41, 41, 41, .14); background: #f8f3ea; box-shadow: 0 22px 70px rgba(0, 0, 0, .2); }
+.account-cancel-dialog__close { position: absolute; top: 12px; right: 14px; width: 36px; height: 36px; border: 0; background: transparent; color: #292929; cursor: pointer; font-size: 28px; }
+.account-cancel-dialog__close:disabled { cursor: wait; opacity: .5; }
+.account-cancel-dialog h2 { margin: 8px 36px 10px 0; color: #292929; font-size: clamp(24px, 4vw, 32px); font-weight: 400; }
+.account-cancel-dialog > p:not(.new-in-hero__eyebrow) { color: rgba(41, 41, 41, .7); font-size: 13px; line-height: 1.6; }
+.account-cancel-dialog form { display: grid; gap: 10px; margin-top: 22px; }
+.account-cancel-dialog form > label { color: #416557; font-size: 12px; }
+.account-cancel-dialog textarea { box-sizing: border-box; width: 100%; min-height: 110px; padding: 12px; border: 1px solid rgba(41, 41, 41, .2); border-radius: 2px; background: #fffdf8; color: #292929; font: inherit; font-size: 13px; resize: vertical; }
+.account-cancel-dialog textarea:focus { border-color: #587364; outline: 2px solid rgba(88, 115, 100, .16); }
+.account-cancel-dialog__count { justify-self: end; color: rgba(41, 41, 41, .55); font-size: 11px; }
+.account-cancel-dialog__actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
+.account-cancel-dialog__actions button { min-height: 44px; padding: 0 16px; border: 1px solid #416557; border-radius: 2px; cursor: pointer; font: inherit; font-size: 12px; }
+.account-cancel-dialog__keep { background: transparent; color: #416557; }
+.account-cancel-dialog__confirm { background: #8c3d30; color: #fff8ef; }
+.account-cancel-dialog__confirm:disabled,.account-cancel-dialog__keep:disabled { cursor: not-allowed; opacity: .55; }
+
+@media (max-width: 900px) {
+  .account-dashboard__stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 650px) {
+  .account-profile { width: calc(100% - 38px); padding: 32px 0 58px; }
+  .account-profile h1 { font-size: 38px; }
+  .account-dashboard__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  .account-dashboard__stats article { min-height: 90px; padding: 13px; }
+  .account-dashboard__stats article strong { font-size: 20px; }
+  .account-orders { margin-top: 26px; }
+  .account-orders__heading h2,.account-details__heading h2 { font-size: 19px; }
+  .account-order { grid-template-columns: minmax(0, 1fr) auto; gap: 7px 12px; }
+  .account-order__main { grid-column: 1 / -1; }
+  .account-order__status { grid-column: 1; }
+  .account-order__total { grid-column: 2; grid-row: 2; }
+  .account-dashboard__links { gap: 9px; }
+  .account-dashboard__links a { padding: 12px; }
+  .account-profile__form { grid-template-columns: 1fr; gap: 14px; }
+  .account-profile__form button,.account-profile__status { grid-column: 1; }
+  .account-recommendation-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .account-cancel-dialog__actions { flex-direction: column-reverse; }
+  .account-cancel-dialog__actions button { width: 100%; }
+}

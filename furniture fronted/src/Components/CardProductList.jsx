@@ -15,11 +15,12 @@ function CardProductList({ one }) {
     let checkProduct = cartData.find(item => item["id"] == one["id"])
     let arr = [...cartData]
     if (checkProduct == undefined) {
-      arr.push(one)
+      arr.push({ ...one, pQuantity: 1 })
     }
+    localStorage.setItem("cartData", JSON.stringify(arr))
     setCartData(arr)
+    window.dispatchEvent(new Event("cartDataUpdated"))
   }
-  localStorage.setItem("cartData", JSON.stringify(cartData))
 
   return (
     <>
