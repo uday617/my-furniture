@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: my-furniture-api
+    runtime: node
+    rootDir: furniture backend
+    buildCommand: npm ci
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: URL
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: CLIENT_URL
+        sync: false

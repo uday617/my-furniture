@@ -1,6 +1,16 @@
 # my-furniture
 furniture web site
 
+## Production deployment
+
+The frontend is a Vite app in `furniture fronted`; the Express API is in `furniture backend`.
+
+1. Create a Render web service from this repository using the root `render.yaml`. Set `URL` to the MongoDB connection string and `CLIENT_URL` to the deployed Vercel site origin (for example, `https://my-furniture.vercel.app`, with no trailing slash). Render generates `SESSION_SECRET` for the service.
+2. Create a Vercel project from the same repository and set its **Root Directory** to `furniture fronted`. Use the default Vite build settings (`npm run build`, output directory `dist`). Add `VITE_API_BASE_URL` with the Render service URL (for example, `https://my-furniture-api.onrender.com`, with no trailing slash), then deploy or redeploy.
+3. If either hosted URL changes, update the other service's corresponding URL setting and redeploy. `CLIENT_URL` must match the browser origin exactly so credentialed requests and account sessions work.
+
+Optional backend settings include Stripe test credentials (`STRIPE_SECRET_KEY`), SMTP settings for email, and any other integrations documented in the backend code. Keep secrets in the hosting provider's environment settings; do not commit `.env` files.
+
 ## Local checkout and accounts
 
 1. Configure `furniture backend/.env` with the MongoDB `URL`, frontend `CLIENT_URL`, and a random `SESSION_SECRET` of at least 32 characters. Generate one with `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`. Keep `.env` private; it is ignored by Git.
